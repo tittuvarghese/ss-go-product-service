@@ -1,0 +1,77 @@
+syntax = "proto3";
+package ecommerce;
+
+option go_package = "proto/";
+
+// Product message definition
+message Product {
+  // string product_id = 1; // UUID
+  string name = 2;
+  int32 quantity = 3;
+  string type = 4;
+  string category = 5;
+  repeated string image_urls = 6;
+  double price = 7;
+  // Size message to store width and height
+  message Size {
+    double width = 1;
+    double height = 2;
+  }
+  Size size = 8;
+  double weight = 9;
+  double shipping_base_price = 10;
+  int32 base_delivery_timelines = 11; // in days
+  string seller_id = 12; // Seller information (ID only for simplicity)
+}
+
+// Request and response messages
+// For creating a new product
+message CreateProductRequest {
+  Product product = 1; // The product to create
+}
+
+message CreateProductResponse {
+  string message = 1;
+}
+
+// For getting a single product by ID
+message GetProductRequest {
+  string product_id = 1;
+}
+
+message GetProductResponse {
+  Product product = 1;
+}
+
+// For getting multiple products by IDs
+message GetProductsRequest {
+  repeated string query = 1;
+}
+
+message GetProductsResponse {
+  repeated Product products = 1;
+}
+
+// For updating a product
+message UpdateProductRequest {
+  Product product = 1;
+}
+
+message UpdateProductResponse {
+  Product product = 1;
+}
+
+// gRPC service definition
+service ProductService {
+  // Create a new product
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+
+  // Get a single product by ID
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+
+  // Get multiple products by IDs
+  rpc GetProducts(GetProductsRequest) returns (GetProductsResponse);
+
+  // Update a product
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
+}
