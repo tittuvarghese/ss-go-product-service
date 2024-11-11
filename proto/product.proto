@@ -5,7 +5,7 @@ option go_package = "proto/";
 
 // Product message definition
 message Product {
-  // string product_id = 1; // UUID
+  string product_id = 1; // UUID
   string name = 2;
   int32 quantity = 3;
   string type = 4;
@@ -40,7 +40,8 @@ message GetProductRequest {
 }
 
 message GetProductResponse {
-  Product product = 1;
+  string Message = 1;
+  Product product = 2;
 }
 
 // For getting multiple products by IDs
@@ -49,7 +50,8 @@ message GetProductsRequest {
 }
 
 message GetProductsResponse {
-  repeated Product products = 1;
+  string Message = 1;
+  repeated Product products = 2;
 }
 
 // For updating a product

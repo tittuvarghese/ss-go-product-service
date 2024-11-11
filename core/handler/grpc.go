@@ -53,7 +53,7 @@ func (s *Server) CreateProduct(ctx context.Context, req *proto.CreateProductRequ
 	product.Quantity = req.Product.Quantity
 	product.Type = req.Product.Type
 	product.Category = req.Product.Category
-	//product.ImageURLs = req.Product.ImageUrls
+	//product.ImageUrls = req.Product.ImageUrls
 	product.Price = req.Product.Price
 	product.Width = req.Product.Size.Width
 	product.Height = req.Product.Size.Height
@@ -67,14 +67,14 @@ func (s *Server) CreateProduct(ctx context.Context, req *proto.CreateProductRequ
 			Message: "Unable to parse seller id",
 		}, err
 	}
-	product.SellerID = sellerId
+	product.SellerId = sellerId
 
 	// Image Parsing
 	imageUrlsJson, err := json.Marshal(req.Product.ImageUrls)
 	if err != nil {
 		log.Error("Error marshaling data: %v", err)
 	}
-	product.ImageURLs = string(imageUrlsJson)
+	product.ImageUrls = string(imageUrlsJson)
 
 	err = service.CreateProduct(product, s.RdbInstance)
 	if err != nil {
@@ -85,4 +85,33 @@ func (s *Server) CreateProduct(ctx context.Context, req *proto.CreateProductRequ
 
 	// Return the created product
 	return &proto.CreateProductResponse{Message: "Successfully created the product listing"}, nil
+}
+
+func (s *Server) GetProduct(ctx context.Context, req *proto.GetProductRequest) (*proto.GetProductResponse, error) {
+
+	product, err := service.GetProduct(req.GetProductId(), s.RdbInstance)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &proto.Product{
+		ProductId:             product.ID.String(),
+		Name:                  product.Name,
+		Quantity:              product.Quantity,
+		Type:                  product.Type,
+		Category:              product.Category,
+		Price:                 product.Price,
+		Size:                  &proto.Product_Size{Width: product.Width, Height: product.Height},
+		Weight:                product.Weight,
+		ShippingBasePrice:     product.ShippingBasePrice,
+		BaseDeliveryTimelines: product.BaseDeliveryTimelines,
+		SellerId:              product.SellerId.String(),
+	}
+
+	err = json.Unmarshal([]byte(product.ImageUrls), &response.ImageUrls)
+	if err != nil {
+		log.Error("Error unmarshalling JSON: %v", err)
+	}
+
+	return &proto.GetProductResponse{Message: "Successfully retrieved the product", Product: response}, nil
 }
