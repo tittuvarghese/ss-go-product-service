@@ -115,3 +115,34 @@ func (s *Server) GetProduct(ctx context.Context, req *proto.GetProductRequest) (
 
 	return &proto.GetProductResponse{Message: "Successfully retrieved the product", Product: response}, nil
 }
+
+func (s *Server) GetProducts(ctx context.Context, req *proto.GetProductsRequest) (*proto.GetProductsResponse, error) {
+
+	products, err := service.GetProducts(s.RdbInstance)
+	if err != nil {
+		return nil, err
+	}
+	var response []*proto.Product
+
+	for _, product := range products {
+		res := &proto.Product{
+			ProductId:             product.ID.String(),
+			Name:                  product.Name,
+			Quantity:              product.Quantity,
+			Type:                  product.Type,
+			Category:              product.Category,
+			Price:                 product.Price,
+			Size:                  &proto.Product_Size{Width: product.Width, Height: product.Height},
+			Weight:                product.Weight,
+			ShippingBasePrice:     product.ShippingBasePrice,
+			BaseDeliveryTimelines: product.BaseDeliveryTimelines,
+			SellerId:              product.SellerId.String(),
+		}
+		err = json.Unmarshal([]byte(product.ImageUrls), &res.ImageUrls)
+		if err != nil {
+			log.Error("Error unmarshalling JSON: %v", err)
+		}
+		response = append(response, res)
+	}
+	return &proto.GetProductsResponse{Message: "Successfully retrieved the product", Products: response}, nil
+}
