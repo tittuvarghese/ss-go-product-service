@@ -102,3 +102,11 @@ func GetProducts(storage *database.RelationalDatabase) ([]models.Product, error)
 
 	return result, nil
 }
+
+func UpdateProduct(product models.Product, storage *database.RelationalDatabase) error {
+	err := storage.Instance.Update(&product)
+	if err != nil {
+		return err
+	}
+	return nil
+}

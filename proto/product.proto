@@ -56,11 +56,13 @@ message GetProductsResponse {
 
 // For updating a product
 message UpdateProductRequest {
-  Product product = 1;
+  string product_id = 1;
+  Product product = 2;
 }
 
 message UpdateProductResponse {
-  Product product = 1;
+  string Message = 1;
+//  Product product = 2;
 }
 
 // gRPC service definition
