@@ -90,10 +90,22 @@ func (s *Server) CreateProduct(ctx context.Context, req *proto.CreateProductRequ
 
 func (s *Server) GetProduct(ctx context.Context, req *proto.GetProductRequest) (*proto.GetProductResponse, error) {
 
-	product, err := service.GetProduct(req.GetProductId(), s.RdbInstance)
+	productResult, err := service.GetProduct(req.GetProductId(), s.RdbInstance)
+
+	fmt.Println(err)
+
 	if err != nil {
 		return nil, err
 	}
+
+	if len(productResult) <= 0 {
+		log.Error("no products found", nil)
+		return &proto.GetProductResponse{
+			Message: "No products found",
+		}, fmt.Errorf("no products found")
+	}
+
+	product := productResult[0]
 
 	response := &proto.Product{
 		ProductId:             product.ID.String(),
@@ -112,6 +124,9 @@ func (s *Server) GetProduct(ctx context.Context, req *proto.GetProductRequest) (
 	err = json.Unmarshal([]byte(product.ImageUrls), &response.ImageUrls)
 	if err != nil {
 		log.Error("Error unmarshalling JSON: %v", err)
+		return &proto.GetProductResponse{
+			Message: "No products found",
+		}, err
 	}
 
 	return &proto.GetProductResponse{Message: "Successfully retrieved the product", Product: response}, nil
@@ -125,7 +140,7 @@ func (s *Server) GetProducts(ctx context.Context, req *proto.GetProductsRequest)
 	}
 	var response []*proto.Product
 
-	for _, product := range products {
+	for _, product := range *products {
 		res := &proto.Product{
 			ProductId:             product.ID.String(),
 			Name:                  product.Name,
@@ -150,10 +165,12 @@ func (s *Server) GetProducts(ctx context.Context, req *proto.GetProductsRequest)
 
 func (s *Server) UpdateProduct(ctx context.Context, req *proto.UpdateProductRequest) (*proto.UpdateProductResponse, error) {
 
-	product, err := service.GetProduct(req.GetProductId(), s.RdbInstance)
+	productResult, err := service.GetProduct(req.GetProductId(), s.RdbInstance)
 	if err != nil {
 		return nil, err
 	}
+
+	product := productResult[0]
 
 	if product.SellerId.String() != req.Product.SellerId {
 		return &proto.UpdateProductResponse{
