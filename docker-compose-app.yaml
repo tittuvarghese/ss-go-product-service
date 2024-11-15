@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  product-service:
+    container_name: product-service
+    image: tittuvarghese/scalableservice:latest
+    command:
+      - "./product-service"
+    environment:
+      - DATABASE_URL=ecommerceuser:password@tcp(mariadb:3306)/ecommerce?charset=utf8mb4&parseTime=True&loc=Local
+    ports:
+      - "8083:8083"
