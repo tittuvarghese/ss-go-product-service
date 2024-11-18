@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/tittuvarghese/core/config"
-	"github.com/tittuvarghese/core/logger"
-	"github.com/tittuvarghese/product-service/constants"
-	"github.com/tittuvarghese/product-service/core/database"
-	"github.com/tittuvarghese/product-service/core/handler"
-	"github.com/tittuvarghese/product-service/models"
+	"github.com/tittuvarghese/ss-go-core/config"
+	"github.com/tittuvarghese/ss-go-core/logger"
+	"github.com/tittuvarghese/ss-go-product-service/constants"
+	"github.com/tittuvarghese/ss-go-product-service/core/database"
+	"github.com/tittuvarghese/ss-go-product-service/core/handler"
+	"github.com/tittuvarghese/ss-go-product-service/models"
 )
 
 func main() {
