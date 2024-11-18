@@ -2,8 +2,8 @@ package service
 
 import (
 	"fmt"
-	"github.com/tittuvarghese/product-service/core/database"
-	"github.com/tittuvarghese/product-service/models"
+	"github.com/tittuvarghese/ss-go-product-service/core/database"
+	"github.com/tittuvarghese/ss-go-product-service/models"
 )
 
 func CreateProduct(product models.Product, storage *database.RelationalDatabase) error {
